@@ -1,0 +1,1 @@
+{"version":3,"file":"helloworld.js","sourceRoot":"","sources":["../../src/resolvers/helloworld.ts"],"names":[],"mappings":";;;;;;;;;;;;AAAA,+CAA+C;AAGxC,IAAM,kBAAkB,GAAxB,MAAM,kBAAkB;IAE3B,KAAK;QACD,OAAO,mCAAmC,CAAC;IAC/C,CAAC;CACJ,CAAA;AALY,gDAAkB;AAE3B;IADC,IAAA,oBAAK,EAAC,GAAG,EAAE,CAAC,MAAM,CAAC;;;;+CAGnB;6BAJQ,kBAAkB;IAD9B,IAAA,uBAAQ,GAAE;GACE,kBAAkB,CAK9B"}
