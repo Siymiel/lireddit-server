@@ -16,8 +16,7 @@ exports.default = (0, postgresql_1.defineConfig)({
     debug: !constants_1.__prod__,
     driverOptions: { connection: { ssl: false } },
     migrations: {
-        path: path_1.default.join(__dirname, './migrations'),
-        pattern: /^[\w-]+\d+\.[tj]s$/,
+        path: path_1.default.join(__dirname, './migrations'), // path to the folder with migrations
     },
 });
 //# sourceMappingURL=mikro-orm.config.js.map

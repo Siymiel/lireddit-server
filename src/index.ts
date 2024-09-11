@@ -1,21 +1,42 @@
+import "reflect-metadata";
 import { MikroORM } from "@mikro-orm/postgresql";
 import { __prod__ } from "./constants";
-import { Post } from "./entities/Post";
 import mikroOrmConfig from "./mikro-orm.config";
+import express from "express";
+import { ApolloServer } from "apollo-server-express";
+import { buildSchema } from "type-graphql";
+import { HelloResolver } from "./resolvers/hello";
+import { PostResolver } from "./resolvers/post";
 
 const main = async () => {
-    const orm = await MikroORM.init(mikroOrmConfig)
+  // Initialize MikroORM
+  const orm = await MikroORM.init(mikroOrmConfig);
 
-    await orm.getMigrator().up();
+  // Run Migrations
+  await orm.getMigrator().up();
 
-    // Fork a new EntityManager instance for this operation
-    const em = orm.em.fork(); 
+  // Initialize Express
+  const app = express();
 
-    // const post = em.create(Post, {title: 'my first post'}); // Instance of post
-    // await em.persistAndFlush(post);
+  // Initialize ApolloServer
+  const apolloServer = new ApolloServer({
+    schema: await buildSchema({
+      resolvers: [HelloResolver, PostResolver],
+      validate: false,
+    }),
+    context: () => ({ em: orm.em.fork() }), // Fork EntityManager for each request
+  });
 
-    const posts = await em.find(Post, {})
-    console.log(posts)
-}
+  // Start the Apollo Server
+  await apolloServer.start();
 
-main().catch(err => console.log(err))
+  // Apply middleware to Express
+  apolloServer.applyMiddleware({ app }); // Creates GraphQL endpoint on Express
+
+  // Start the Express server
+  app.listen(4000, () => {
+    console.log("server started on localhost:4000");
+  });
+};
+
+main().catch((err) => console.log(err));
