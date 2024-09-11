@@ -22,18 +22,18 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.PostResolver = void 0;
-const Post_1 = require("../entities/Post");
+const entities_1 = require("../entities");
 const type_graphql_1 = require("type-graphql");
 let PostResolver = class PostResolver {
     posts({ em }) {
-        return em.find(Post_1.Post, {});
+        return em.find(entities_1.Post, {});
     }
     post(id, { em }) {
-        return em.findOne(Post_1.Post, { id });
+        return em.findOne(entities_1.Post, { id });
     }
     createPost(title_1, _a) {
         return __awaiter(this, arguments, void 0, function* (title, { em }) {
-            const post = new Post_1.Post();
+            const post = new entities_1.Post();
             post.title = title;
             yield em.persistAndFlush(post);
             return post;
@@ -41,7 +41,7 @@ let PostResolver = class PostResolver {
     }
     updatePost(id_1, title_1, _a) {
         return __awaiter(this, arguments, void 0, function* (id, title, { em }) {
-            const post = yield em.findOne(Post_1.Post, { id });
+            const post = yield em.findOne(entities_1.Post, { id });
             if (!post) {
                 return null;
             }
@@ -54,21 +54,21 @@ let PostResolver = class PostResolver {
     }
     deletePost(id_1, _a) {
         return __awaiter(this, arguments, void 0, function* (id, { em }) {
-            yield em.nativeDelete(Post_1.Post, { id });
+            yield em.nativeDelete(entities_1.Post, { id });
             return true;
         });
     }
 };
 exports.PostResolver = PostResolver;
 __decorate([
-    (0, type_graphql_1.Query)(() => [Post_1.Post]),
+    (0, type_graphql_1.Query)(() => [entities_1.Post]),
     __param(0, (0, type_graphql_1.Ctx)()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Object]),
     __metadata("design:returntype", Promise)
 ], PostResolver.prototype, "posts", null);
 __decorate([
-    (0, type_graphql_1.Query)(() => Post_1.Post, { nullable: true }),
+    (0, type_graphql_1.Query)(() => entities_1.Post, { nullable: true }),
     __param(0, (0, type_graphql_1.Arg)("id", () => type_graphql_1.Int)),
     __param(1, (0, type_graphql_1.Ctx)()),
     __metadata("design:type", Function),
@@ -76,7 +76,7 @@ __decorate([
     __metadata("design:returntype", Promise)
 ], PostResolver.prototype, "post", null);
 __decorate([
-    (0, type_graphql_1.Mutation)(() => Post_1.Post),
+    (0, type_graphql_1.Mutation)(() => entities_1.Post),
     __param(0, (0, type_graphql_1.Arg)("title", () => String)),
     __param(1, (0, type_graphql_1.Ctx)()),
     __metadata("design:type", Function),
@@ -84,7 +84,7 @@ __decorate([
     __metadata("design:returntype", Promise)
 ], PostResolver.prototype, "createPost", null);
 __decorate([
-    (0, type_graphql_1.Mutation)(() => Post_1.Post, { nullable: true }),
+    (0, type_graphql_1.Mutation)(() => entities_1.Post, { nullable: true }),
     __param(0, (0, type_graphql_1.Arg)("id", () => Number)),
     __param(1, (0, type_graphql_1.Arg)("title", () => String, { nullable: true })),
     __param(2, (0, type_graphql_1.Ctx)()),

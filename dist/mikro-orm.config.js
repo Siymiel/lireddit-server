@@ -5,14 +5,15 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const postgresql_1 = require("@mikro-orm/postgresql");
 const constants_1 = require("./constants");
-const Post_1 = require("./entities/Post");
+const entities_1 = require("./entities");
 const path_1 = __importDefault(require("path"));
+require("dotenv/config");
 exports.default = (0, postgresql_1.defineConfig)({
-    entities: [Post_1.Post],
-    dbName: 'lireddit',
-    user: 'postgres',
-    password: 'deepSpace10!#',
-    port: 5432,
+    entities: [entities_1.Post, entities_1.User],
+    dbName: process.env.DB_NAME,
+    user: process.env.DB_USER,
+    password: process.env.DB_PASSWORD,
+    port: parseInt(process.env.DB_PORT || '5432'),
     debug: !constants_1.__prod__,
     driverOptions: { connection: { ssl: false } },
     migrations: {

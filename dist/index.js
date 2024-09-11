@@ -18,8 +18,9 @@ const mikro_orm_config_1 = __importDefault(require("./mikro-orm.config"));
 const express_1 = __importDefault(require("express"));
 const apollo_server_express_1 = require("apollo-server-express");
 const type_graphql_1 = require("type-graphql");
-const hello_1 = require("./resolvers/hello");
-const post_1 = require("./resolvers/post");
+const resolvers_1 = require("./resolvers");
+require("dotenv/config");
+const PORT = process.env.PORT;
 const main = () => __awaiter(void 0, void 0, void 0, function* () {
     // Initialize MikroORM
     const orm = yield postgresql_1.MikroORM.init(mikro_orm_config_1.default);
@@ -30,7 +31,7 @@ const main = () => __awaiter(void 0, void 0, void 0, function* () {
     // Initialize ApolloServer
     const apolloServer = new apollo_server_express_1.ApolloServer({
         schema: yield (0, type_graphql_1.buildSchema)({
-            resolvers: [hello_1.HelloResolver, post_1.PostResolver],
+            resolvers: [resolvers_1.HelloResolver, resolvers_1.PostResolver, resolvers_1.UserResolver],
             validate: false,
         }),
         context: () => ({ em: orm.em.fork() }), // Fork EntityManager for each request
@@ -40,7 +41,7 @@ const main = () => __awaiter(void 0, void 0, void 0, function* () {
     // Apply middleware to Express
     apolloServer.applyMiddleware({ app }); // Creates GraphQL endpoint on Express
     // Start the Express server
-    app.listen(4000, () => {
+    app.listen(PORT, () => {
         console.log("server started on localhost:4000");
     });
 });
