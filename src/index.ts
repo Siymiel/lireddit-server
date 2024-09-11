@@ -5,8 +5,11 @@ import mikroOrmConfig from "./mikro-orm.config";
 import express from "express";
 import { ApolloServer } from "apollo-server-express";
 import { buildSchema } from "type-graphql";
-import { HelloResolver } from "./resolvers/hello";
-import { PostResolver } from "./resolvers/post";
+import { PostResolver, HelloResolver, UserResolver } from "./resolvers";
+
+import "dotenv/config";
+
+const PORT = process.env.PORT
 
 const main = async () => {
   // Initialize MikroORM
@@ -21,7 +24,7 @@ const main = async () => {
   // Initialize ApolloServer
   const apolloServer = new ApolloServer({
     schema: await buildSchema({
-      resolvers: [HelloResolver, PostResolver],
+      resolvers: [HelloResolver, PostResolver, UserResolver],
       validate: false,
     }),
     context: () => ({ em: orm.em.fork() }), // Fork EntityManager for each request
@@ -34,7 +37,7 @@ const main = async () => {
   apolloServer.applyMiddleware({ app }); // Creates GraphQL endpoint on Express
 
   // Start the Express server
-  app.listen(4000, () => {
+  app.listen(PORT, () => {
     console.log("server started on localhost:4000");
   });
 };
