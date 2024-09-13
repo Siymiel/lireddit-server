@@ -13,8 +13,6 @@ import { argon2id, hash, verify } from "argon2";
 import {
   validatePassword,
   validateUsername,
-  validateUserExists,
-  validateHashedPassword,
   FieldError,
 } from "../utils";
 
@@ -25,14 +23,6 @@ class UsernamePasswordInput {
   @Field()
   password: string;
 }
-
-// @ObjectType()
-// class FieldError {
-//   @Field()
-//   field: string;
-//   @Field()
-//   message: string;
-// }
 
 @ObjectType()
 class UserResponse {
@@ -55,8 +45,6 @@ export class UserResolver {
       validateUsername(options.username),
       validatePassword(options.password),
     ].filter((error) => error !== null) as FieldError[];
-
-    console.log("Errors", errors);
 
     const hashedPassword = await hash(options.password, { type: argon2id });
     const user = new User();
@@ -88,7 +76,7 @@ export class UserResolver {
   @Mutation(() => UserResponse)
   async login(
     @Arg("options") options: UsernamePasswordInput,
-    @Ctx() { em }: MyContext
+    @Ctx() { em, req }: MyContext
   ): Promise<UserResponse> {
     const user = await em.findOne(User, { username: options.username });
 
@@ -115,6 +103,8 @@ export class UserResolver {
         ],
       };
     }
+
+    req.session!.userId = user.id;
 
     return { user };
   }

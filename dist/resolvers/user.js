@@ -39,13 +39,6 @@ __decorate([
 UsernamePasswordInput = __decorate([
     (0, type_graphql_1.InputType)()
 ], UsernamePasswordInput);
-// @ObjectType()
-// class FieldError {
-//   @Field()
-//   field: string;
-//   @Field()
-//   message: string;
-// }
 let UserResponse = class UserResponse {
 };
 __decorate([
@@ -67,7 +60,6 @@ let UserResolver = class UserResolver {
                 (0, utils_1.validateUsername)(options.username),
                 (0, utils_1.validatePassword)(options.password),
             ].filter((error) => error !== null);
-            console.log("Errors", errors);
             const hashedPassword = yield (0, argon2_1.hash)(options.password, { type: argon2_1.argon2id });
             const user = new entities_1.User();
             user.username = options.username;
@@ -97,7 +89,7 @@ let UserResolver = class UserResolver {
     }
     // Login
     login(options_1, _a) {
-        return __awaiter(this, arguments, void 0, function* (options, { em }) {
+        return __awaiter(this, arguments, void 0, function* (options, { em, req }) {
             const user = yield em.findOne(entities_1.User, { username: options.username });
             if (!user) {
                 return {
@@ -120,6 +112,7 @@ let UserResolver = class UserResolver {
                     ],
                 };
             }
+            req.session.userId = user.id;
             return { user };
         });
     }
