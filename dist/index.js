@@ -32,17 +32,15 @@ const main = () => __awaiter(void 0, void 0, void 0, function* () {
     yield orm.getMigrator().up();
     // Initialize Express
     const app = (0, express_1.default)();
-    // app.use((_, res, next) => {
-    //   res.setHeader("Access-Control-Allow-Origin", "https://studio.apollographql.com");
-    //   res.setHeader("Access-Control-Allow-Credentials", "true");
-    //   res.setHeader("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
-    //   next();
-    // });
     // Set up CORS middleware before any routes
     app.use((0, cors_1.default)({
         origin: "https://studio.apollographql.com", // Apollo Studio origin
         credentials: true, // Allow cookies to be sent with requests
     }));
+    app.use((_, res, next) => {
+        res.setHeader("Content-Security-Policy", "script-src 'self' 'unsafe-inline' 'unsafe-eval' app.satismeter.com");
+        next();
+    });
     // Initialize redis client.
     let redisClient = (0, redis_1.createClient)();
     redisClient.connect().catch(console.error);
@@ -63,7 +61,7 @@ const main = () => __awaiter(void 0, void 0, void 0, function* () {
             maxAge: 1000 * 60 * 60 * 24 * 365 * 10, // 10 years
             httpOnly: true,
             secure: true,
-            sameSite: "none", // csrf
+            sameSite: "none" // "none" for cross-site requests in prod, "lax" for development
         },
     }));
     // Initialize ApolloServer

@@ -53,6 +53,17 @@ UserResponse = __decorate([
     (0, type_graphql_1.ObjectType)()
 ], UserResponse);
 let UserResolver = class UserResolver {
+    // Me Query
+    me(_a) {
+        return __awaiter(this, arguments, void 0, function* ({ em, req }) {
+            console.log("Session:", req.session);
+            if (!req.session.userId) {
+                return null;
+            }
+            const user = yield em.findOne(entities_1.User, { id: req.session.userId });
+            return user;
+        });
+    }
     // Register
     register(options_1, _a) {
         return __awaiter(this, arguments, void 0, function* (options, { em }) {
@@ -112,12 +123,25 @@ let UserResolver = class UserResolver {
                     ],
                 };
             }
-            req.session.userId = user.id;
+            // Check if session exists before setting userId
+            if (req.session) {
+                req.session.userId = user.id;
+            }
+            else {
+                throw new Error("Session not initialized");
+            }
             return { user };
         });
     }
 };
 exports.UserResolver = UserResolver;
+__decorate([
+    (0, type_graphql_1.Query)(() => entities_1.User, { nullable: true }),
+    __param(0, (0, type_graphql_1.Ctx)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", Promise)
+], UserResolver.prototype, "me", null);
 __decorate([
     (0, type_graphql_1.Mutation)(() => UserResponse),
     __param(0, (0, type_graphql_1.Arg)("options")),

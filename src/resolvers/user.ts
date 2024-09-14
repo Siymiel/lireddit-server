@@ -7,14 +7,11 @@ import {
   InputType,
   Mutation,
   ObjectType,
+  Query,
   Resolver,
 } from "type-graphql";
 import { argon2id, hash, verify } from "argon2";
-import {
-  validatePassword,
-  validateUsername,
-  FieldError,
-} from "../utils";
+import { validatePassword, validateUsername, FieldError } from "../utils";
 
 @InputType()
 class UsernamePasswordInput {
@@ -35,6 +32,17 @@ class UserResponse {
 
 @Resolver()
 export class UserResolver {
+  // Me Query
+  @Query(() => User, { nullable: true })
+  async me(@Ctx() { em, req }: MyContext): Promise<User | null> {
+    console.log("Session:", req.session);
+    if (!req.session!.userId) {
+      return null;
+    }
+    const user = await em.findOne(User, { id: req.session!.userId });
+    return user;
+  }
+
   // Register
   @Mutation(() => UserResponse)
   async register(
@@ -104,7 +112,12 @@ export class UserResolver {
       };
     }
 
-    req.session!.userId = user.id;
+    // Check if session exists before setting userId
+    if (req.session) {
+      req.session.userId = user.id;
+    } else {
+      throw new Error("Session not initialized");
+    }
 
     return { user };
   }

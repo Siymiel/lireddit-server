@@ -25,13 +25,6 @@ const main = async () => {
   // Initialize Express
   const app = express();
 
-  // app.use((_, res, next) => {
-  //   res.setHeader("Access-Control-Allow-Origin", "https://studio.apollographql.com");
-  //   res.setHeader("Access-Control-Allow-Credentials", "true");
-  //   res.setHeader("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
-  //   next();
-  // });
-
   // Set up CORS middleware before any routes
   app.use(
     cors({
@@ -39,6 +32,14 @@ const main = async () => {
       credentials: true, // Allow cookies to be sent with requests
     })
   );
+
+  app.use((_, res, next) => {
+    res.setHeader(
+      "Content-Security-Policy",
+      "script-src 'self' 'unsafe-inline' 'unsafe-eval' app.satismeter.com"
+    );
+    next();
+  });
 
   // Initialize redis client.
   let redisClient = createClient();
@@ -63,7 +64,7 @@ const main = async () => {
         maxAge: 1000 * 60 * 60 * 24 * 365 * 10, // 10 years
         httpOnly: true,
         secure: true,
-        sameSite: "none", // csrf
+        sameSite: "none" // "none" for cross-site requests in prod, "lax" for development
       },
     })
   );
